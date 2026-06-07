@@ -3,19 +3,19 @@ version: '3.9'
 services:
   maven:
     build: .
-    container_name: mavencont11
+    container_name: mavencont111
     ports:
-      - "3000:3000"
+      - "3008:3000"
 
   mysql:
     image: mysql:8
-    container_name: mysqlcont11
+    container_name: mysqlcont111
     environment:
       - MYSQL_ROOT_PASSWORD=pass123
     ports:
-      - "8082:3306"
+      - "8083:3306"
     volumes:
-      - appdata11:/var/lib/mysql
+      - appdata111:/var/lib/mysql
 
 volumes:
-  appdata11:
+  appdata111:
