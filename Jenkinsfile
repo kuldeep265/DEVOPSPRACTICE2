@@ -37,7 +37,7 @@ pipeline {
                 ]) {
 
                     bat '''
-                    echo USER=%DOCKER_USERNAME%
+                    
 
                     docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
 
