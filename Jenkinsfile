@@ -2,31 +2,31 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'kuldeep7860/mavenimg'
+        IMAGE_NAME = "kuldeep7860/mavenimg"
+        IMAGE_TAG = "latest"
     }
 
     stages {
 
-        stage('clone repo') {
+        stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/kuldeep265/DEVOPSPRACTICE2.git'
+                checkout scm
             }
         }
 
-        stage('maven build') {
+        stage('Build Maven Project') {
             steps {
                 bat 'mvn clean package'
             }
         }
 
-        stage('build docker image') {
+        stage('Build Docker Image') {
             steps {
-                bat "docker build -t %DOCKER_IMAGE% ."
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
             }
         }
 
-        stage('docker login and push ') {
+        stage('Docker Login and Push') {
             steps {
                 withCredentials([
                     usernamePassword(
@@ -35,14 +35,20 @@ pipeline {
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
-                    bat 'echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin'
-                     bat "docker push %DOCKER_IMAGE%"
+
+                    bat '''
+                    echo USER=%DOCKER_USERNAME%
+
+                    docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
+
+                    docker push %IMAGE_NAME%:%IMAGE_TAG%
+                    '''
                 }
             }
         }
-        stage('deploy') {
+
+        stage('Deploy') {
             steps {
-                bat 'docker compose down'
                 bat 'docker compose up -d'
             }
         }
